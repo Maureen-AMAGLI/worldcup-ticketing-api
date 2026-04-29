@@ -10,7 +10,9 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "paths": {
-      "@domain/*": ["./src/domain/*"]
+      "@domain/*": ["./src/domain/*"],
+      "infrastructure/*": ["./src/infrastructure/*"],
+      "application/*": ["./src/application/*"]
     }
   }
 }
