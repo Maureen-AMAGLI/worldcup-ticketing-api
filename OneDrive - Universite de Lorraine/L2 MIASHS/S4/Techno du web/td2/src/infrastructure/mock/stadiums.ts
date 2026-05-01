@@ -4,7 +4,7 @@ import {cities} from "./cities";
 const [newYork, losAngeles, mexicoCity, guadalajara, toronto, vancouver] = cities;
 
 export const stadiums = [
-    new Stadium(1, "Metlife Stadium", newYork, 75000),
+    new Stadium(1, "MetLife Stadium", newYork, 75000),
     new Stadium(2, " SoFi Stadium", losAngeles, 70000),
     new Stadium(3, "Estadio Azteca", mexicoCity, 72766),
     new Stadium(4, "Estadio Akron", guadalajara, 44330),

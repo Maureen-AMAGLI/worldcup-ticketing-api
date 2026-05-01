@@ -1,4 +1,5 @@
 import { Context } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { matchs } from "../../mock/matchs";
 import { FifaCode } from "../../../domain/value-objects/FifaCode";
 import { MatchStage } from "../../../domain/enums/MatchStage";
@@ -7,19 +8,15 @@ export class GetMatchsHandler {
   async handle(c: Context) {
     const teamCode = c.req.query("team[code]");
     const stage = c.req.query("stage");
-
+    const date = c.req.query("date");
     let result = [...matchs];
 
     if (teamCode) {
       try {
         new FifaCode(teamCode.toUpperCase());
       } catch {
-        return c.json({
-          success: false,
-          error: `Code FIFA invalide : ${teamCode}`
-        }, 400);
+        throw new HTTPException(400, { message: `Invalid FIFA code : ${teamCode}` });
       }
-
       result = result.filter((m) =>
         m.homeTeam.code.value.toLowerCase() === teamCode.toLowerCase() ||
         m.awayTeam.code.value.toLowerCase() === teamCode.toLowerCase()
@@ -28,19 +25,24 @@ export class GetMatchsHandler {
 
     if (stage) {
       if (!Object.values(MatchStage).includes(stage as MatchStage)) {
-        return c.json({
-          success: false,
-          error: `Stage invalide : ${stage}`
-        }, 400);
+        throw new HTTPException(400, { message: `Invalid FIFA code: "${teamCode}"` });
       }
-
       result = result.filter((m) => m.stage === stage);
     }
 
-    return c.json({
-      success: true,
-      message: "All matchs",
-      data: result
-    });
+    if (date) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        throw new HTTPException(400, { message: `Invalid FIFA code: "${fifaCode}"` });
+      }
+      result = result.filter((m) =>
+        m.date.toISOString().split("T")[0] === date
+      );
+    }
+
+  return c.json({
+    success: true,
+    message: date ? `Matchs filtered by date: ${date}` : teamCode ? `Matchs filtered by team[code]: ${teamCode}` : "All matchs",
+    data: result
+});
   }
 }
